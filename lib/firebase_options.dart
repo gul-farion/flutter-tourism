@@ -33,29 +33,32 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAd4pRN3lwLMxdENIlijccsgssVz2xEQYo',
-    appId: '1:937310847204:web:81030a275dc1a0cdd1acf1',
-    messagingSenderId: '937310847204',
-    projectId: 'flutter-pizza-abc5c',
-    authDomain: 'flutter-pizza-abc5c.firebaseapp.com',
-    storageBucket: 'flutter-pizza-abc5c.firebasestorage.app',
+    apiKey: 'AIzaSyAh8gX0YnGn3XxqH48nlb1AnN1UeaYKUY4',
+    appId: '1:959799209604:web:6617970ea499ae3f2cdcd1',
+    messagingSenderId: '959799209604',
+    projectId: 'flutter-tourism-62f6b',
+    authDomain: 'flutter-tourism-62f6b.firebaseapp.com',
+    storageBucket: 'flutter-tourism-62f6b.firebasestorage.app',
+    measurementId: 'G-X2BF2TRBBD',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCXRG5Ki6UYv3Hm5KANzXQjDywu-cpwUKw',
-    appId: '1:937310847204:ios:ec0e39619ee7fe3bd1acf1',
-    messagingSenderId: '937310847204',
-    projectId: 'flutter-pizza-abc5c',
-    storageBucket: 'flutter-pizza-abc5c.firebasestorage.app',
+    apiKey: 'AIzaSyAB76WvKo0zRXFQ0xaZyPI3OShjMBCrqpA',
+    appId: '1:959799209604:ios:9a515705d6db69ef2cdcd1',
+    messagingSenderId: '959799209604',
+    projectId: 'flutter-tourism-62f6b',
+    storageBucket: 'flutter-tourism-62f6b.firebasestorage.app',
     iosBundleId: 'com.example.pizzeriaApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAd4pRN3lwLMxdENIlijccsgssVz2xEQYo',
-    appId: '1:937310847204:web:dcdb8a86e9bccd68d1acf1',
-    messagingSenderId: '937310847204',
-    projectId: 'flutter-pizza-abc5c',
-    authDomain: 'flutter-pizza-abc5c.firebaseapp.com',
-    storageBucket: 'flutter-pizza-abc5c.firebasestorage.app',
+    apiKey: 'AIzaSyAh8gX0YnGn3XxqH48nlb1AnN1UeaYKUY4',
+    appId: '1:959799209604:web:d65bd3cb9a72db982cdcd1',
+    messagingSenderId: '959799209604',
+    projectId: 'flutter-tourism-62f6b',
+    authDomain: 'flutter-tourism-62f6b.firebaseapp.com',
+    storageBucket: 'flutter-tourism-62f6b.firebasestorage.app',
+    measurementId: 'G-PJTHXN80FS',
   );
+
 }

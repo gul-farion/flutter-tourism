@@ -26,7 +26,6 @@ class _FoodCardState extends State<FoodCard> {
       onEnter: (_) {
         setState(() {
           _isHovered = true;
-
         });
       },
       cursor: SystemMouseCursors.click,
@@ -38,99 +37,105 @@ class _FoodCardState extends State<FoodCard> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
+          duration: const Duration(milliseconds: 150),
           transform: _isHovered
-              ? (Matrix4.identity()..scale(1.03))
+              ? (Matrix4.identity()..scale(1.02))
               : Matrix4.identity(),
           decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.grey[300]!, 
-              width: 1,
-              
-            ), 
-            boxShadow: _isHovered
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 12,
-                      blurStyle: BlurStyle.outer,
-                    ),
-                  ]
-                : null,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          child: Card(
-            color: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 0,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(12),
-                    ),
-                    child: Image.network(
-                      widget.foodItem.imageUrl,
-                      fit: BoxFit.contain,
-                      width: double.infinity,
-                    ),
-                  ),
+          child: Row(
+            children: [
+              // Image on the left
+              ClipRRect(
+                borderRadius: const BorderRadius.horizontal(
+                  left: Radius.circular(12),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    widget.foodItem.name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "SpaceGrotesk",
-                    ),
-                  ),
+                child: Image.network(
+                  widget.foodItem.imageUrl,
+                  width: 120,
+                  height: 120,
+                  fit: BoxFit.cover,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    widget.foodItem.body,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[900]),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Баға: ${widget.foodItem.price.toStringAsFixed(0)} ₸',
+                        widget.foodItem.name,
                         style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      if (_isHovered)
-                        ElevatedButton(
-                          onPressed: widget.onAddToBasket,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff0A78D6),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 2,
-                              vertical: 4,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(2),
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.foodItem.body,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Rating Indicator
+                          Row(
+                            children: List.generate(5, (index) {
+                              return Icon(
+                                index < (widget.foodItem.rating ?? 0)
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: Colors.amber,
+                                size: 16,
+                              );
+                            }),
+                          ),
+                          Text(
+                            '${widget.foodItem.price.toStringAsFixed(0)} ₸',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
                           ),
-                          child: Icon(Icons.add_shopping_cart, color: Colors.white),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed: widget.onAddToBasket,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xff0A78D6),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 6,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                          child: const Icon(Icons.add_shopping_cart),
                         ),
+                      ),
                     ],
                   ),
-                )
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

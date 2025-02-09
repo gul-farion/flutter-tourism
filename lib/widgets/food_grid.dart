@@ -73,6 +73,7 @@ class FoodGrid extends StatelessWidget {
                   body: data['body'] ?? '',
                   price: (data['price'] as num).toDouble(),
                   imageUrl: data['image'] as String,
+                  rating: data['rating'] as double,
                 );
               }).toList();
 
@@ -249,6 +250,7 @@ class FoodGrid extends StatelessWidget {
                               body: foodItem.body,
                               price: foodItem.price,
                               imageUrl: foodItem.imageUrl,
+                              rating: foodItem.rating,
                               selectedSize: selectedSize,
                             );
 

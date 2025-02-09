@@ -5,6 +5,8 @@ import 'package:pizzeria_app/firebase_options.dart';
 import 'package:pizzeria_app/pages/account_page.dart';
 import 'package:pizzeria_app/pages/category_page.dart';
 import 'package:pizzeria_app/pages/profile_page.dart';
+import 'package:pizzeria_app/providers/favorites_provider.dart';
+import 'package:pizzeria_app/providers/tour_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:window_size/window_size.dart';
 import 'providers/cart_provider.dart';
@@ -24,7 +26,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows) {
-    setWindowTitle("SPORTMODA");
+    setWindowTitle("КазТурАг");
     WindowManager.instance.setMinimumSize(const Size(1700, 800));
     setWindowMaxSize(const Size(1440, 1200));
     setWindowMinSize(const Size(1440, 900));
@@ -37,6 +39,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => categoryProvider),
+        ChangeNotifierProvider(create: (_) => TourProvider()),
+        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
       ],
       child: const MyApp(),
     ),

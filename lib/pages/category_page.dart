@@ -90,6 +90,7 @@ class CategoryPage extends StatelessWidget {
                 body: product['body'] ?? '',
                 price: (product['price'] as num).toDouble(),
                 imageUrl: product['image'],
+                rating: product['rating'],
               );
 
               return FoodCard(
@@ -227,6 +228,7 @@ class CategoryPage extends StatelessWidget {
                               body: foodItem.body,
                               price: foodItem.price,
                               imageUrl: foodItem.imageUrl,
+                              rating: foodItem.rating,
                               selectedSize: selectedSize,
                             );
 
