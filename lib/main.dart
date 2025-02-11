@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:pizzeria_app/firebase_options.dart';
+import 'package:pizzeria_app/pages/about_page.dart';
 import 'package:pizzeria_app/pages/account_page.dart';
-import 'package:pizzeria_app/pages/category_page.dart';
+import 'package:pizzeria_app/pages/products_page.dart';
+// import 'package:pizzeria_app/pages/category_page.dart';
 import 'package:pizzeria_app/pages/profile_page.dart';
 import 'package:pizzeria_app/providers/favorites_provider.dart';
 import 'package:pizzeria_app/providers/tour_provider.dart';
@@ -26,7 +28,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows) {
-    setWindowTitle("КазТурАг");
+    setWindowTitle("ht.kz");
     WindowManager.instance.setMinimumSize(const Size(1700, 800));
     setWindowMaxSize(const Size(1440, 1200));
     setWindowMinSize(const Size(1440, 900));
@@ -54,20 +56,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'SPORTMODA',
+      title: 'КазТурАг',
       theme: ThemeData(
         iconTheme: IconThemeData(color: Colors.white),
-        fontFamily: 'Raleway',
+        fontFamily: 'Arial Rounded MT Bold',
         listTileTheme: const ListTileThemeData(
           iconColor: Colors.white
         ),
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomePage(),   
+        '/': (context) => const ProfilePage(),   
+        '/home': (context) => const HomePage(),   
         '/cart': (context) => const CartPage(),
         '/profile': (context) => const ProfilePage(),
         '/account': (context) => const AccountPage(),
+        '/admin': (context) => const AdminPage(),
+        '/about': (context) => const AboutPage(),
         // '/category': (context) =>  CategoryPage(),
       },
     );

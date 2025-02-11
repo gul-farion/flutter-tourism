@@ -24,7 +24,7 @@ class CategoryProvider extends ChangeNotifier {
       }).toList();
 
       if (_categories.isNotEmpty) {
-        _selectedCategory = _categories[0]['title']; // Выбираем первую категорию
+        _selectedCategory = _categories[0]['title'];
       }
 
       print("Fetched ${_categories.length} categories from Firestore");
@@ -36,8 +36,9 @@ class CategoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setCategory(String category) {
+  void setCategory(String category) async {
     _selectedCategory = category;
     notifyListeners();
+    print("Selected category updated: $_selectedCategory");
   }
 }

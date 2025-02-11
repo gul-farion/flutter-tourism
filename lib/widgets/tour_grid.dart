@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/tour.dart';
 import '../pages/tour_detail_page.dart';
+import '../providers/cart_provider.dart';
 
 class TourGrid extends StatelessWidget {
   final List<Tour> tours;
@@ -9,11 +11,14 @@ class TourGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: tours.length,
       itemBuilder: (context, index) {
         final tour = tours[index];
+        final isFavorite = cartProvider.items.contains(tour); // Проверяем, есть ли тур в корзине
 
         return GestureDetector(
           onTap: () {
@@ -29,6 +34,7 @@ class TourGrid extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.black87),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
@@ -45,8 +51,8 @@ class TourGrid extends StatelessWidget {
                   borderRadius: const BorderRadius.horizontal(left: Radius.circular(12)),
                   child: Image.network(
                     tour.imageUrl,
-                    width: 150,
-                    height: 120,
+                    width: 250,
+                    height: 190,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -58,27 +64,48 @@ class TourGrid extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          tour.name,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                tour.name,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w900,
+                                  fontFamily: 'Inter',
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                color: isFavorite ? Colors.red : Colors.grey,
+                              ),
+                              onPressed: () {
+                                if (isFavorite) {
+                                  cartProvider.removeItem(tour);
+                                } else {
+                                  cartProvider.addItem(tour);
+                                }
+                              },
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 6),
                         Text(
                           tour.description,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 14, color: Colors.grey),
+                          style: const TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Inter'),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          "${tour.price} ₸",
+                          "Тур бағасы: ${tour.price} ₸",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: Colors.blueAccent,
                           ),
                         ),
 

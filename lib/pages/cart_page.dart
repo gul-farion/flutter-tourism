@@ -4,6 +4,8 @@ import '../providers/cart_provider.dart';
 import '../widgets/payment_modal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../models/food_item.dart';
+import '../models/tour.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
@@ -16,7 +18,7 @@ class CartPage extends StatelessWidget {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          'Себет',
+          'Ұнағандар себеті',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xff0A78D6),
@@ -24,7 +26,7 @@ class CartPage extends StatelessWidget {
       body: cart.items.isEmpty
           ? const Center(
               child: Text(
-                'Себетіңіз бос!',
+                'Сіз ұнағандар әлі қоспадыңыз!',
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
             )
@@ -66,7 +68,7 @@ class CartPage extends StatelessWidget {
                                       item.imageUrl,
                                       width: 100,
                                       height: 100,
-                                      fit: BoxFit.contain,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                   const SizedBox(width: 16),
@@ -82,7 +84,8 @@ class CartPage extends StatelessWidget {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        if (item.selectedSize != null)
+                                        if (item is FoodItem &&
+                                            item.selectedSize != null)
                                           Text(
                                             'Өлшемі: ${item.selectedSize}',
                                             style: const TextStyle(
@@ -91,13 +94,22 @@ class CartPage extends StatelessWidget {
                                             ),
                                           ),
                                         const SizedBox(height: 4),
-                                        Text(
-                                          item.body,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey,
+                                        if (item is FoodItem)
+                                          Text(
+                                            item.body,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
                                           ),
-                                        ),
+                                        if (item is Tour)
+                                          Text(
+                                            "Орналасуы: ${item.location}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
                                         const SizedBox(height: 8),
                                         Text(
                                           '${item.price.toStringAsFixed(2)} ₸',
@@ -128,7 +140,7 @@ class CartPage extends StatelessWidget {
                                                 : null,
                                           ),
                                           Text(
-                                            quantity.toString(),
+                                          '${quantity.toString()} адам',
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -230,35 +242,35 @@ class CartPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: cart.totalPrice < 1000
-                ? null
-                : () => showDialog(
-                      context: context,
-                      builder: (context) => PaymentModal(
-                        onOrderSuccess: () async {
-                          await _saveOrderToFirestore(cart);
-                          cart.clear();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Тапсырыс жіберілді!'),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xff0A78D6),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-            child: const Text(
-              'Тапсырыс ету',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          // ElevatedButton(
+          //   onPressed: cart.totalPrice < 1000
+          //       ? null
+          //       : () => showDialog(
+          //             context: context,
+          //             builder: (context) => PaymentModal(
+          //               onOrderSuccess: () async {
+          //                 await _saveOrderToFirestore(cart);
+          //                 cart.clear();
+          //                 ScaffoldMessenger.of(context).showSnackBar(
+          //                   const SnackBar(
+          //                     content: Text('Тапсырыс жіберілді!'),
+          //                   ),
+          //                 );
+          //               },
+          //             ),
+          //           ),
+          //   style: ElevatedButton.styleFrom(
+          //     backgroundColor: const Color(0xff0A78D6),
+          //     padding: const EdgeInsets.symmetric(vertical: 12),
+          //   ),
+          //   // child: const Text(
+          //   //   'Тапсырыс ету',
+          //   //   style: TextStyle(
+          //   //     color: Colors.white,
+          //   //     fontWeight: FontWeight.bold,
+          //   //   ),
+          //   // ),
+          // ),
         ],
       ),
     );

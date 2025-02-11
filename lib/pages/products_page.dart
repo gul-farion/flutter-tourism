@@ -11,36 +11,35 @@ class AdminPage extends StatefulWidget {
 
 class _AdminPageState extends State<AdminPage> {
   final TextEditingController _categoryController = TextEditingController();
-  final TextEditingController _productNameController = TextEditingController();
-  final TextEditingController _productDescriptionController =
+  final TextEditingController _tourNameController = TextEditingController();
+  final TextEditingController _tourDescriptionController =
       TextEditingController();
-  final TextEditingController _productPriceController = TextEditingController();
-  final TextEditingController _productImageController = TextEditingController();
+  final TextEditingController _tourPriceController = TextEditingController();
+  final TextEditingController _tourImageController = TextEditingController();
   String? _selectedCategory;
 
-  // Temporary controllers for editing
   final TextEditingController _editNameController = TextEditingController();
   final TextEditingController _editDescriptionController =
       TextEditingController();
   final TextEditingController _editPriceController = TextEditingController();
   final TextEditingController _editImageController = TextEditingController();
+  final TextEditingController _tourDurationController = TextEditingController();
+  final TextEditingController _tourRatingController = TextEditingController();
+
+// Temporary controllers for editing
+  final TextEditingController _editDurationController = TextEditingController();
+  final TextEditingController _editRatingController = TextEditingController();
+
   String? _editCategory;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
+        foregroundColor: Colors.white,
         backgroundColor: const Color(0xff0A78D6),
         title: const Text(
-          "Тауарлармен және категориялармен жұмыс",
+          "Турларды және категорияларды басқару",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -51,7 +50,7 @@ class _AdminPageState extends State<AdminPage> {
           children: [
             _buildCategoryManagement(),
             const SizedBox(height: 32),
-            _buildProductManagement(),
+            _buildTourManagement(),
           ],
         ),
       ),
@@ -64,7 +63,7 @@ class _AdminPageState extends State<AdminPage> {
       children: [
         const Text(
           "Категорияларды басқару",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Row(
@@ -73,7 +72,7 @@ class _AdminPageState extends State<AdminPage> {
               child: TextField(
                 controller: _categoryController,
                 decoration: const InputDecoration(
-                  labelText: "Категория қосу",
+                  labelText: "Жаңа категория қосу",
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -94,9 +93,6 @@ class _AdminPageState extends State<AdminPage> {
           stream:
               FirebaseFirestore.instance.collection('categories').snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
               return const Text("Категориялар жоқ.");
             }
@@ -120,22 +116,19 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
-  Widget _buildProductManagement() {
+  Widget _buildTourManagement() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Тауарлар",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          "Турларды басқару",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         FutureBuilder<List<DropdownMenuItem<String>>>(
           future: _getCategoryDropdownItems(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-            if (snapshot.hasError || snapshot.data == null) {
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Text("Категорияларды жазуда қателік кетті");
             }
             return DropdownButtonFormField<String>(
@@ -154,58 +147,28 @@ class _AdminPageState extends State<AdminPage> {
           },
         ),
         const SizedBox(height: 16),
-        TextField(
-          controller: _productNameController,
-          decoration: const InputDecoration(
-            labelText: "Тауар аты",
-            border: OutlineInputBorder(),
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _productDescriptionController,
-          decoration: const InputDecoration(
-            labelText: "Тауар сипаттамасы",
-            border: OutlineInputBorder(),
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _productPriceController,
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: const InputDecoration(
-            labelText: "Тауар бағасы",
-            border: OutlineInputBorder(),
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _productImageController,
-          decoration: const InputDecoration(
-            labelText: "Тауардың суретінің URL сілтемесі",
-            border: OutlineInputBorder(),
-          ),
-        ),
+        _buildTextField(_tourNameController, "Тур аты"),
+        _buildTextField(_tourDescriptionController, "Тур сипаттамасы"),
+        _buildTextField(_tourPriceController, "Тур бағасы",
+            inputType: TextInputType.number),
+        _buildTextField(_tourImageController, "Тур суретінің URL сілтемесі"),
+        _buildTextField(_tourDurationController, "Тур ұзақтылығы"),
         const SizedBox(height: 16),
         ElevatedButton(
-          onPressed: _addProduct,
+          onPressed: _addTour,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xff0A78D6),
             foregroundColor: Colors.white,
           ),
-          child: const Text("Тауар қосу"),
+          child: const Text("Тур қосу"),
         ),
         const SizedBox(height: 16),
-        const Text("Барлық тауарлар", style: TextStyle(fontSize: 24)),
+        const Text("Барлық турлар", style: TextStyle(fontSize: 24)),
         StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('products').snapshots(),
+          stream: FirebaseFirestore.instance.collection('tours').snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return const Text("Тауарлар жоқ.");
+              return const Text("Турлар жоқ.");
             }
             return ListView.builder(
               shrinkWrap: true,
@@ -214,10 +177,10 @@ class _AdminPageState extends State<AdminPage> {
                 final doc = snapshot.data!.docs[index];
                 return ListTile(
                   leading: Image.network(
-                    doc['image'],
+                    doc['imageUrl'],
                     width: 50,
                     height: 50,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                   ),
                   title: Text(doc['name']),
                   subtitle: Text("${doc['price']} ₸"),
@@ -226,11 +189,11 @@ class _AdminPageState extends State<AdminPage> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () => _editProduct(doc),
+                        onPressed: () => _editTour(doc),
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _deleteProduct(doc.id),
+                        onPressed: () => _deleteTour(doc.id),
                       ),
                     ],
                   ),
@@ -243,35 +206,117 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
-  void _editProduct(DocumentSnapshot product) {
-    _editNameController.text = product['name'];
-    _editDescriptionController.text = product['body'];
-    _editPriceController.text = product['price'].toString();
-    _editImageController.text = product['image'];
-    _editCategory = product['category'];
+  Widget _buildTextField(TextEditingController controller, String label,
+      {TextInputType inputType = TextInputType.text}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: TextField(
+        controller: controller,
+        keyboardType: inputType,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+
+  Future<List<DropdownMenuItem<String>>> _getCategoryDropdownItems() async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('categories').get();
+    return snapshot.docs
+        .map((doc) => DropdownMenuItem<String>(
+              value: doc['title'],
+              child: Text(doc['title']),
+            ))
+        .toList();
+  }
+
+  Future<void> _addCategory() async {
+    final title = _categoryController.text.trim();
+    if (title.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('categories')
+          .add({'title': title});
+      _categoryController.clear();
+    }
+  }
+
+  Future<void> _deleteCategory(String id) async {
+    await FirebaseFirestore.instance.collection('categories').doc(id).delete();
+  }
+
+  Future<void> _addTour() async {
+    final name = _tourNameController.text.trim();
+    final description = _tourDescriptionController.text.trim();
+    final price = double.tryParse(_tourPriceController.text.trim());
+    final imageUrl = _tourImageController.text.trim();
+    final category = _selectedCategory;
+    final duration = _tourDurationController.text.trim();
+    final rating = double.tryParse(_tourRatingController.text.trim()) ?? 0.0;
+
+    if (name.isNotEmpty &&
+        description.isNotEmpty &&
+        price != null &&
+        imageUrl.isNotEmpty &&
+        category != null &&
+        duration.isNotEmpty) {
+      await FirebaseFirestore.instance.collection('tours').add({
+        'name': name,
+        'description': description,
+        'price': price,
+        'imageUrl': imageUrl,
+        'category': category,
+        'duration': duration,
+        'rating': rating,
+      });
+      _clearTourFields();
+    }
+  }
+
+  void _clearTourFields() {
+    _tourNameController.clear();
+    _tourDescriptionController.clear();
+    _tourPriceController.clear();
+    _tourImageController.clear();
+    _tourDurationController.clear();
+    _tourRatingController.clear();
+    _selectedCategory = null;
+  }
+
+  Future<void> _deleteTour(String id) async {
+    await FirebaseFirestore.instance.collection('tours').doc(id).delete();
+  }
+
+  void _editTour(DocumentSnapshot tour) {
+    _editNameController.text = tour['name'];
+    _editDescriptionController.text = tour['description'];
+    _editPriceController.text = tour['price'].toString();
+    _editImageController.text = tour['imageUrl'];
+    _editCategory = tour['category'];
+    _editDurationController.text = tour['duration'];
+    _editRatingController.text = tour['rating'].toString();
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Тауарды өзгерту"),
+          title: const Text("Турды өңдеу"),
           content: SingleChildScrollView(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: _editNameController,
                   decoration: const InputDecoration(
-                    labelText: "Тауар аты",
-                    border: OutlineInputBorder(),
-                  ),
+                      labelText: "Тур атауы", border: OutlineInputBorder()),
                 ),
                 const SizedBox(height: 8),
                 TextField(
                   controller: _editDescriptionController,
                   decoration: const InputDecoration(
-                    labelText: "Тауар сипаттамасы",
-                    border: OutlineInputBorder(),
-                  ),
+                      labelText: "Тур сипаттамасы",
+                      border: OutlineInputBorder()),
                 ),
                 const SizedBox(height: 8),
                 TextField(
@@ -279,27 +324,34 @@ class _AdminPageState extends State<AdminPage> {
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   decoration: const InputDecoration(
-                    labelText: "Тауар бағасы",
-                    border: OutlineInputBorder(),
-                  ),
+                      labelText: "Бағасы (₸)", border: OutlineInputBorder()),
                 ),
                 const SizedBox(height: 8),
                 TextField(
                   controller: _editImageController,
                   decoration: const InputDecoration(
-                    labelText: "Сурет URL сілтемесі",
-                    border: OutlineInputBorder(),
-                  ),
+                      labelText: "Сурет URL", border: OutlineInputBorder()),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _editDurationController,
+                  decoration: const InputDecoration(
+                      labelText: "Тур ұзақтығы", border: OutlineInputBorder()),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _editRatingController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                      labelText: "Рейтинг (0.0 - 5.0)",
+                      border: OutlineInputBorder()),
                 ),
                 const SizedBox(height: 8),
                 FutureBuilder<List<DropdownMenuItem<String>>>(
                   future: _getCategoryDropdownItems(),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    }
-                    if (snapshot.hasError || snapshot.data == null) {
-                      return const Text("Категорияларды жазуда қателік кетті");
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Text("Категориялар жоқ");
                     }
                     return DropdownButtonFormField<String>(
                       value: _editCategory,
@@ -318,96 +370,34 @@ class _AdminPageState extends State<AdminPage> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Артқа"),
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Болдырмау"),
             ),
             ElevatedButton(
               onPressed: () async {
                 await FirebaseFirestore.instance
-                    .collection('products')
-                    .doc(product.id)
+                    .collection('tours')
+                    .doc(tour.id)
                     .update({
                   'name': _editNameController.text,
-                  'body': _editDescriptionController.text,
+                  'description': _editDescriptionController.text,
                   'price': double.parse(_editPriceController.text),
                   'image': _editImageController.text,
                   'category': _editCategory,
+                  'duration': _editDurationController.text,
+                  'rating': double.parse(_editRatingController.text),
                 });
                 Navigator.pop(context);
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff0A78D6),
+                foregroundColor: Colors.white,
+              ),
               child: const Text("Сақтау"),
             ),
           ],
         );
       },
     );
-  }
-
-  Future<List<DropdownMenuItem<String>>> _getCategoryDropdownItems() async {
-  try {
-    final snapshot =
-        await FirebaseFirestore.instance.collection('categories').get();
-    return snapshot.docs
-        .map((doc) => DropdownMenuItem<String>(
-              value: doc['title'],
-              child: Text(doc['title']),
-            ))
-        .toList();
-  } catch (error) {
-    print("Error fetching categories: $error");
-    return [];
-  }
-}
-
-
-  Future<void> _addCategory() async {
-    final title = _categoryController.text.trim();
-    if (title.isNotEmpty) {
-      await FirebaseFirestore.instance
-          .collection('categories')
-          .add({'title': title});
-      _categoryController.clear();
-    }
-  }
-
-  Future<void> _deleteCategory(String id) async {
-    await FirebaseFirestore.instance.collection('categories').doc(id).delete();
-  }
-
-  Future<void> _addProduct() async {
-    final name = _productNameController.text.trim();
-    final description = _productDescriptionController.text.trim();
-    final price = double.tryParse(_productPriceController.text.trim());
-    final imageUrl = _productImageController.text.trim();
-    final category = _selectedCategory;
-
-    if (name.isNotEmpty &&
-        description.isNotEmpty &&
-        price != null &&
-        imageUrl.isNotEmpty &&
-        category != null) {
-      await FirebaseFirestore.instance.collection('products').add({
-        'name': name,
-        'body': description,
-        'price': price,
-        'image': imageUrl,
-        'category': category,
-      });
-      _clearProductFields();
-    }
-  }
-
-  Future<void> _deleteProduct(String id) async {
-    await FirebaseFirestore.instance.collection('products').doc(id).delete();
-  }
-
-  void _clearProductFields() {
-    _productNameController.clear();
-    _productDescriptionController.clear();
-    _productPriceController.clear();
-    _productImageController.clear();
-    _selectedCategory = null;
   }
 }
